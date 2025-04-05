@@ -10,7 +10,8 @@
         :key="`${cell.x}-${cell.y}`"
         class="w-[10px] h-[10px] border border-gray-200"
         :class="{
-          'bg-red-500': cell.hasRover
+          'bg-red-500': cell.hasRover,
+          'bg-gray-500': cell.isObstacle
         }"
       >
       </div>
@@ -37,12 +38,24 @@ const rover = reactive<CommandInput>({
 })
 
 const map = ref(createEmptyMap(MAX_MAP_VALUE))
+map.value.grid.forEach((row, rowIndex) => {
+  row.forEach((cell, colIndex) => {
+    console.log(`Cell [${rowIndex}, ${colIndex}] - isObstacle: ${cell.isObstacle}`);
+  });
+});
 
 watch(
   () => props.commandInput,
   (newCommands) => {
     if (newCommands) {
       getNewCommands(newCommands)
+
+      if(isObstacle(rover.x, rover.y)){
+        console.warn('The rover is on an obstacle. Enter a new position.')
+        map.value.grid.forEach ((row) => row.forEach((cell) => (cell.hasRover = false)))
+        return
+      }
+
       drawRoverPosition()
       setTimeout(moveRover, 500)
     }
@@ -92,7 +105,13 @@ function moveRover() {
         rover.y = currentY
         console.warn('Rover is out of the limit! Staying in the last valid position.')
         return
+      }
 
+      if (isObstacle(rover.x, rover.y)){
+        rover.x = currentX
+        rover.y = currentY
+        console.warn('Obstacle ahead! Sequence stopped.')
+        return
       }
 
       drawRoverPosition();
@@ -106,6 +125,12 @@ function moveRover() {
 
 function isOutOfLimits (x: number, y: number){
   return (x < 0 || x> MAX_MAP_VALUE || y < 0 || y > MAX_MAP_VALUE)
+}
+
+function isObstacle (x: number, y: number){
+  const cell = map.value.grid[y]?.[x]
+  console.log(cell)
+  return cell.isObstacle
 }
 
 
