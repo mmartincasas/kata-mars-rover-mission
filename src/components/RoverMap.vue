@@ -5,15 +5,12 @@
     :key="rowIndex" 
     class="flex"
     >
-      <div
+    <div
         v-for="cell in row"
         :key="`${cell.x}-${cell.y}`"
-        class="w-[10px] h-[10px] border border-gray-200"
-        :class="{
-          'bg-red-500': cell.hasRover,
-          'bg-gray-500': cell.isObstacle
-        }"
-      >
+        class="w-[12px] h-[12px] border border-gray-200 relative">
+        <div v-if="cell.hasRover" :class="getRoverClass()"></div>
+        <div v-if="cell.isObstacle" class="absolute inset-0 bg-gray-500"></div>
       </div>
     </div>
   </div>
@@ -38,17 +35,17 @@ const rover = reactive<CommandInput>({
 })
 
 const map = ref(createEmptyMap(MAX_MAP_VALUE))
-map.value.grid.forEach((row, rowIndex) => {
-  row.forEach((cell, colIndex) => {
-    console.log(`Cell [${rowIndex}, ${colIndex}] - isObstacle: ${cell.isObstacle}`);
-  });
-});
+
+const hasError = ref(false)
+const isSuccess = ref(false)
 
 watch(
   () => props.commandInput,
   (newCommands) => {
     if (newCommands) {
       getNewCommands(newCommands)
+      isSuccess.value = false
+      hasError.value = false
 
       if(isObstacle(rover.x, rover.y)){
         console.warn('The rover is on an obstacle. Enter a new position.')
@@ -104,6 +101,7 @@ function moveRover() {
         rover.x = currentX
         rover.y = currentY
         console.warn('Rover is out of the limit! Staying in the last valid position.')
+        hasError.value = true
         return
       }
 
@@ -111,16 +109,23 @@ function moveRover() {
         rover.x = currentX
         rover.y = currentY
         console.warn('Obstacle ahead! Sequence stopped.')
+        hasError.value = true
         return
       }
 
-      drawRoverPosition();
-      index++;
+      hasError.value = false
+      index++
+
+      if(index === rover.commands.length){
+        isSuccess.value = true
+      }
+
+      drawRoverPosition()
       setTimeout(executeNextMove, 500);
     }
   }
 
-  executeNextMove();
+  executeNextMove()
 }
 
 function isOutOfLimits (x: number, y: number){
@@ -178,4 +183,64 @@ function drawRoverPosition() {
   
 }
 
+function getRoverClass() {
+  let baseClass = 'rover'
+
+  if (hasError.value) {
+    baseClass += ' error'
+  }
+  if (isSuccess.value) {
+    baseClass += ' success'
+  }
+
+  switch (rover.direction) {
+    case 'N':
+      return baseClass + ' rotate-0'
+    case 'S':
+      return baseClass + ' rotate-180'
+    case 'E':
+      return baseClass + ' rotate-90'
+    case 'W':
+      return baseClass + ' rotate-270'
+    default:
+      return baseClass
+  }
+}
+
 </script>
+
+<style scoped>
+
+.rover {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 10px solid rgb(255, 230, 0);
+}
+
+.rover.error {
+  border-bottom: 10px solid rgb(255, 0, 43);
+}
+
+.rover.success {
+  border-bottom: 10px solid rgb(102, 255, 0);
+}
+
+.rotate-0 {
+  transform: rotate(0deg);
+}
+
+.rotate-90 {
+  transform: rotate(90deg);
+}
+
+.rotate-180 {
+  transform: rotate(180deg);
+}
+
+.rotate-270 {
+  transform: rotate(270deg); 
+}
+
+</style>
