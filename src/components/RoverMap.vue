@@ -44,7 +44,7 @@ watch(
     if (newCommands) {
       getNewCommands(newCommands)
       drawRoverPosition()
-      moveRover()
+      setTimeout(moveRover, 500)
     }
   }
 )
@@ -58,7 +58,7 @@ function getNewCommands (newCommands: CommandInput) {
 }
 
 function moveRover() {
-  let index = 0;
+  let index = 0
 
   function executeNextMove() {
     if (index < rover.commands.length) {
@@ -67,6 +67,10 @@ function moveRover() {
       if (command === 'L' || command === 'R') {
         turnRover(command);
       }
+
+      const currentX = rover.x
+      const currentY = rover.y
+
       switch (rover.direction) {
         case 'N':
           rover.y -= 1;
@@ -82,15 +86,26 @@ function moveRover() {
           break;
       }
 
+      if (isOutOfLimits(rover.x, rover.y)) {
+
+        rover.x = currentX
+        rover.y = currentY
+        console.warn('Rover is out of the limit! Staying in the last valid position.')
+        return
+
+      }
+
       drawRoverPosition();
-
       index++;
-
       setTimeout(executeNextMove, 500);
     }
   }
 
   executeNextMove();
+}
+
+function isOutOfLimits (x: number, y: number){
+  return (x < 0 || x> MAX_MAP_VALUE || y < 0 || y > MAX_MAP_VALUE)
 }
 
 
