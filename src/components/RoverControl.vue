@@ -53,14 +53,10 @@
 <script lang="ts" setup>
 
   import { ref, reactive } from 'vue'
-  import type { CommandInput } from '@/models/CommandInput';
+  import type { CommandInput } from '@/models/CommandInput'
   import useVuelidate from '@vuelidate/core'
-  import { required, numeric, helpers, minValue, maxValue, maxLength } from '@vuelidate/validators';
-
-  const MIN_MAP_VALUE = 0
-  const MAX_MAP_VALUE = 200
-  const MAX_COMMANDS_LENGTH = 50
-  const VALID_COMMANDS_REGEX = /^[LFR]+$/i
+  import { required, numeric, helpers, minValue, maxValue, maxLength } from '@vuelidate/validators'
+  import { MIN_MAP_VALUE, MAX_MAP_VALUE, MAX_COMMANDS_LENGTH, VALID_COMMANDS_REGEX} from '@/constants/map'
 
   const submitted = ref(false)
 
@@ -99,13 +95,9 @@
   const onSubmit = async () => {
     submitted.value = true
     const isValid = await v$.value.$validate()
-
     if (isValid) {
-      console.log('roverControlForm Data:', roverControlForm)
       emit('submit', { ...roverControlForm })
-    } else {
-      console.log('Invalid Form')
-    }
+    } 
   }
 
 </script>
