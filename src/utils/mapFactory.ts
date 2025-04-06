@@ -9,7 +9,7 @@ export function createEmptyMap(maxValue: number): MapData {
       row.push({
         x,
         y,
-        isObstacle: Math.random() < (1 / 8)
+        isObstacle: Math.random() < (1 / 10)
       })
     }
     grid.push(row)

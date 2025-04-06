@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col">
+  <div class="flex flex-col p-4">
     <div 
     v-for="(row, rowIndex) in map.grid" 
     :key="rowIndex" 
@@ -8,9 +8,9 @@
     <div
         v-for="cell in row"
         :key="`${cell.x}-${cell.y}`"
-        class="w-[12px] h-[12px] border border-gray-200 relative">
+        class="w-[12px] h-[12px] border border-rover-secondary relative">
         <div v-if="cell.hasRover" :class="getRoverClass()"></div>
-        <div v-if="cell.isObstacle" class="absolute inset-0 bg-gray-500"></div>
+        <div v-if="cell.isObstacle" class="absolute inset-0 bg-rover-grey"></div>
       </div>
     </div>
   </div>
