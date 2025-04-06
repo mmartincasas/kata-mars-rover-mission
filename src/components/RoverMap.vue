@@ -1,5 +1,16 @@
 <template>
-  <div class="flex flex-col p-4">
+<div
+  class="mb-4 px-4 py-2 rounded text-sm font-semibold transition-all duration-300 text-center bg-gray-900"
+  :class="{
+    'text-gray-400': roverStatus === 'waiting',
+    'text-yellow-400 animate-pulse': roverStatus === 'executing',
+    'text-green-400': roverStatus === 'success',
+    'text-red-400 animate-shake': isErrorStatus
+  }"
+>
+  {{ statusMessage }}
+</div>
+  <div class="flex flex-col">
     <div 
     v-for="(row, rowIndex) in map.grid" 
     :key="rowIndex" 
@@ -18,7 +29,7 @@
 
 <script lang="ts" setup>
 
-import { reactive, ref, watch } from 'vue'
+import { reactive, ref, watch, computed } from 'vue'
 import type { CommandInput } from '@/models/CommandInput'
 import { MAX_MAP_VALUE } from '@/constants/map'
 import { createEmptyMap } from '@/utils/mapFactory'
@@ -39,6 +50,30 @@ const map = ref(createEmptyMap(MAX_MAP_VALUE))
 const hasError = ref(false)
 const isSuccess = ref(false)
 
+const roverStatus = ref<
+  'waiting' |
+  'executing' |
+  'success' |
+  'errorAppearInObstacle' |
+  'errorObstacle' |
+  'errorLimits'
+>('waiting')
+
+const isErrorStatus = computed(() =>
+  ['errorAppearInObstacle', 'errorObstacle', 'errorLimits'].includes(roverStatus.value)
+)
+
+const statusMessage = computed(() => {
+  switch (roverStatus.value) {
+    case 'executing': return 'Executing commands...'
+    case 'success': return 'Mission accomplished!'
+    case 'errorAppearInObstacle': return 'The rover is on an obstacle. Please enter a new position.'
+    case 'errorLimits': return 'Execution aborted: The rover is out of bounds!'
+    case 'errorObstacle': return 'Execution aborted: An obstacle is blocking the path!'
+    default: return 'Waiting for new commands...'
+  }
+})
+
 watch(
   () => props.commandInput,
   (newCommands) => {
@@ -48,11 +83,12 @@ watch(
       hasError.value = false
 
       if(isObstacle(rover.x, rover.y)){
-        console.warn('The rover is on an obstacle. Enter a new position.')
+        roverStatus.value = 'errorAppearInObstacle'
         map.value.grid.forEach ((row) => row.forEach((cell) => (cell.hasRover = false)))
         return
       }
 
+      roverStatus.value = 'executing'
       drawRoverPosition()
       setTimeout(moveRover, 500)
     }
@@ -64,7 +100,6 @@ function getNewCommands (newCommands: CommandInput) {
   rover.y = newCommands.y
   rover.direction = newCommands.direction
   rover.commands = newCommands.commands
-  console.log('Rover received new commands:', rover)
 }
 
 function moveRover() {
@@ -100,7 +135,7 @@ function moveRover() {
 
         rover.x = currentX
         rover.y = currentY
-        console.warn('Rover is out of the limit! Staying in the last valid position.')
+        roverStatus.value = 'errorLimits'
         hasError.value = true
         return
       }
@@ -108,7 +143,7 @@ function moveRover() {
       if (isObstacle(rover.x, rover.y)){
         rover.x = currentX
         rover.y = currentY
-        console.warn('Obstacle ahead! Sequence stopped.')
+        roverStatus.value = 'errorObstacle'
         hasError.value = true
         return
       }
@@ -118,6 +153,7 @@ function moveRover() {
 
       if(index === rover.commands.length){
         isSuccess.value = true
+        roverStatus.value = 'success'
       }
 
       drawRoverPosition()
@@ -134,7 +170,6 @@ function isOutOfLimits (x: number, y: number){
 
 function isObstacle (x: number, y: number){
   const cell = map.value.grid[y]?.[x]
-  console.log(cell)
   return cell.isObstacle
 }
 
