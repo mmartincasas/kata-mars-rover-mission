@@ -1,11 +1,11 @@
 <template>
 <div
-  class="mb-4 px-4 py-2 rounded text-sm font-semibold transition-all duration-300 text-center bg-gray-900"
+  class="mb-4 px-4 py-2 rounded text-sm font-semibold transition-all duration-300 text-center bg-rover-secondary/50"
   :class="{
-    'text-gray-400': roverStatus === 'waiting',
-    'text-yellow-400 animate-pulse': roverStatus === 'executing',
-    'text-green-400': roverStatus === 'success',
-    'text-red-400 animate-shake': isErrorStatus
+    'text-rover-grey': roverStatus === 'waiting',
+    'text-rover-execution animate-pulse': roverStatus === 'executing',
+    'text-rover-success': roverStatus === 'success',
+    'text-rover-error animate-shake': isErrorStatus
   }"
 >
   {{ statusMessage }}
@@ -20,8 +20,13 @@
         v-for="cell in row"
         :key="`${cell.x}-${cell.y}`"
         class="w-[12px] h-[12px] border border-rover-secondary relative">
-        <div v-if="cell.hasRover" :class="getRoverClass()"></div>
-        <div v-if="cell.isObstacle" class="absolute inset-0 bg-rover-grey"></div>
+          <div v-if="cell.hasRover" 
+            class="w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-b-[10px]"
+            :class="[getRoverColorClass(), getRoverRotationClass()]">
+          </div>
+          <div v-if="cell.isObstacle" 
+            class="absolute inset-0 bg-rover-grey">
+          </div>
       </div>
     </div>
   </div>
@@ -46,9 +51,6 @@ const rover = reactive<CommandInput>({
 })
 
 const map = ref(createEmptyMap(MAX_MAP_VALUE))
-
-const hasError = ref(false)
-const isSuccess = ref(false)
 
 const roverStatus = ref<
   'waiting' |
@@ -79,8 +81,6 @@ watch(
   (newCommands) => {
     if (newCommands) {
       getNewCommands(newCommands)
-      isSuccess.value = false
-      hasError.value = false
 
       if(isObstacle(rover.x, rover.y)){
         roverStatus.value = 'errorAppearInObstacle'
@@ -116,7 +116,39 @@ function moveRover() {
       const currentX = rover.x
       const currentY = rover.y
 
-      switch (rover.direction) {
+      moveForward()
+
+      if (isOutOfLimits(rover.x, rover.y)) {
+
+        rover.x = currentX
+        rover.y = currentY
+        roverStatus.value = 'errorLimits'
+        return
+      }
+
+      if (isObstacle(rover.x, rover.y)){
+        rover.x = currentX
+        rover.y = currentY
+        roverStatus.value = 'errorObstacle'
+        return
+      }
+
+      index++
+
+      if(index === rover.commands.length){
+        roverStatus.value = 'success'
+      }
+
+      drawRoverPosition()
+      setTimeout(executeNextMove, 500);
+    }
+  }
+
+  executeNextMove()
+}
+
+function moveForward() {
+  switch (rover.direction) {
         case 'N':
           rover.y -= 1;
           break;
@@ -130,38 +162,6 @@ function moveRover() {
           rover.x -= 1;
           break;
       }
-
-      if (isOutOfLimits(rover.x, rover.y)) {
-
-        rover.x = currentX
-        rover.y = currentY
-        roverStatus.value = 'errorLimits'
-        hasError.value = true
-        return
-      }
-
-      if (isObstacle(rover.x, rover.y)){
-        rover.x = currentX
-        rover.y = currentY
-        roverStatus.value = 'errorObstacle'
-        hasError.value = true
-        return
-      }
-
-      hasError.value = false
-      index++
-
-      if(index === rover.commands.length){
-        isSuccess.value = true
-        roverStatus.value = 'success'
-      }
-
-      drawRoverPosition()
-      setTimeout(executeNextMove, 500);
-    }
-  }
-
-  executeNextMove()
 }
 
 function isOutOfLimits (x: number, y: number){
@@ -172,7 +172,6 @@ function isObstacle (x: number, y: number){
   const cell = map.value.grid[y]?.[x]
   return cell.isObstacle
 }
-
 
 function turnRover(direction: 'L' | 'R') {
   if (direction === 'L') {
@@ -218,64 +217,26 @@ function drawRoverPosition() {
   
 }
 
-function getRoverClass() {
-  let baseClass = 'rover'
-
-  if (hasError.value) {
-    baseClass += ' error'
+function getRoverColorClass() {
+  if (roverStatus.value === 'waiting') {
+    return 'border-b-rover-grey'
+  } else if (isErrorStatus.value) {
+    return 'border-b-rover-error'
+  } else if (roverStatus.value === 'success') {
+    return 'border-b-rover-success'
+  } else {
+    return 'border-b-rover-execution'
   }
-  if (isSuccess.value) {
-    baseClass += ' success'
-  }
+}
 
+function getRoverRotationClass() {
   switch (rover.direction) {
-    case 'N':
-      return baseClass + ' rotate-0'
-    case 'S':
-      return baseClass + ' rotate-180'
-    case 'E':
-      return baseClass + ' rotate-90'
-    case 'W':
-      return baseClass + ' rotate-270'
-    default:
-      return baseClass
+    case 'N': return 'rotate-0'
+    case 'S': return 'rotate-180'
+    case 'E': return 'rotate-90'
+    case 'W': return '-rotate-90'
+    default: return ''
   }
 }
 
 </script>
-
-<style scoped>
-
-.rover {
-  width: 0;
-  height: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-bottom: 10px solid rgb(255, 230, 0);
-}
-
-.rover.error {
-  border-bottom: 10px solid rgb(255, 0, 43);
-}
-
-.rover.success {
-  border-bottom: 10px solid rgb(102, 255, 0);
-}
-
-.rotate-0 {
-  transform: rotate(0deg);
-}
-
-.rotate-90 {
-  transform: rotate(90deg);
-}
-
-.rotate-180 {
-  transform: rotate(180deg);
-}
-
-.rotate-270 {
-  transform: rotate(270deg); 
-}
-
-</style>

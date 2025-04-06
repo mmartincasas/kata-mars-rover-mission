@@ -13,7 +13,10 @@ const config: Config = {
         'rover-grey': '#C9D1D9',
         'rover-turquoise': '#1affa2',
         'rover-blue-accent': '#1F6FEB',
-        'rover-blue-active': '#55B2FF'
+        'rover-blue-active': '#55B2FF',
+        'rover-execution': '#FFCC33',
+        'rover-error': '#FF5C38',
+        'rover-success': '#0AE266'
       },
       fontFamily: {
         exo: ['"Exo 2"', 'sans-serif'],

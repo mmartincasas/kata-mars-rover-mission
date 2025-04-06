@@ -6,7 +6,7 @@
       <div>
         <label for="x">X: </label>
         <input id="x" type="number" v-model.number="roverControlForm.x" class="p-1 border rounded text-rover-secondary" />
-        <p v-if="submitted && v$.x.$error" class="text-red-600 text-sm">
+        <p v-if="submitted && v$.x.$error" class="text-rover-error text-sm">
           {{ v$.x.$errors[0]?.$message || 'X is invalid' }}
         </p>
       </div>
@@ -14,7 +14,7 @@
       <div>
         <label for="y">Y: </label>
         <input id="y" type="number" v-model.number="roverControlForm.y" class="p-1 border rounded text-rover-secondary" />
-        <p v-if="submitted && v$.y.$error" class="text-red-600 text-sm">
+        <p v-if="submitted && v$.y.$error" class="text-rover-error text-sm">
           {{ v$.y.$errors[0]?.$message || 'Y is invalid' }}
         </p>
       </div>
@@ -41,7 +41,7 @@
           class="p-1 border rounded text-rover-secondary"
           placeholder="E.g. FFRRFFRL"
         />
-        <p v-if="submitted && v$.commands.$error" class="text-red-600 text-sm">
+        <p v-if="submitted && v$.commands.$error" class="text-rover-error text-sm">
           {{ v$.commands.$errors[0]?.$message || 'Commands is invalid' }}
         </p>
       </div>
