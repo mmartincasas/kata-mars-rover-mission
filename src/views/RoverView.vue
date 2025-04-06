@@ -16,12 +16,13 @@
   <script lang="ts" setup>
   import { ref } from 'vue'
   import RoverConsole from '@/components/RoverControl.vue'
-  import RoverMap from '@/components/RoverMap.vue';
-  import type { CommandInput } from '@/models/CommandInput';
+  import RoverMap from '@/components/RoverMap.vue'
+  import type { CommandInput } from '@/models/CommandInput'
+  import type { RoverStatus } from '@/models/RoverStatus'
 
   const commandInput = ref<CommandInput | null>(null)
 
-  const roverStatus = ref<'waiting' | 'executing' | 'success' | 'errorAppearInObstacle' | 'errorObstacle' | 'errorLimits'>('waiting')
+  const roverStatus = ref<RoverStatus>('waiting')
 
   function handleCommandInput (data: CommandInput) {
     commandInput.value = data

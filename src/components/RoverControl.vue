@@ -62,12 +62,13 @@
 
   import { ref, reactive } from 'vue'
   import type { CommandInput } from '@/models/CommandInput'
+  import type { RoverStatus } from '@/models/RoverStatus'
   import useVuelidate from '@vuelidate/core'
   import { required, numeric, helpers, minValue, maxValue, maxLength } from '@vuelidate/validators'
   import { MIN_MAP_VALUE, MAX_MAP_VALUE, MAX_COMMANDS_LENGTH, VALID_COMMANDS_REGEX} from '@/constants/map'
 
   const props = defineProps<{
-    roverStatus: string
+    roverStatus: RoverStatus
   }>()
   
   const submitted = ref(false)

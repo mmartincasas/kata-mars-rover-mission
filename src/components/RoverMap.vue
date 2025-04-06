@@ -36,6 +36,7 @@
 
 import { reactive, ref, watch, computed } from 'vue'
 import type { CommandInput } from '@/models/CommandInput'
+import type { RoverStatus } from '@/models/RoverStatus'
 import { MAX_MAP_VALUE } from '@/constants/map'
 import { createEmptyMap } from '@/utils/mapFactory'
 
@@ -56,14 +57,7 @@ const emit = defineEmits<{
   (e: 'status-change', value: typeof roverStatus.value): void
 }>()
 
-const roverStatus = ref<
-  'waiting' |
-  'executing' |
-  'success' |
-  'errorAppearInObstacle' |
-  'errorObstacle' |
-  'errorLimits'
->('waiting')
+const roverStatus = ref<RoverStatus>('waiting')
 
 watch(roverStatus, (newStatus) => {
   emit('status-change', newStatus)
