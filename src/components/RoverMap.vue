@@ -52,6 +52,10 @@ const rover = reactive<CommandInput>({
 
 const map = ref(createEmptyMap(MAX_MAP_VALUE))
 
+const emit = defineEmits<{
+  (e: 'status-change', value: typeof roverStatus.value): void
+}>()
+
 const roverStatus = ref<
   'waiting' |
   'executing' |
@@ -60,6 +64,10 @@ const roverStatus = ref<
   'errorObstacle' |
   'errorLimits'
 >('waiting')
+
+watch(roverStatus, (newStatus) => {
+  emit('status-change', newStatus)
+})
 
 const isErrorStatus = computed(() =>
   ['errorAppearInObstacle', 'errorObstacle', 'errorLimits'].includes(roverStatus.value)

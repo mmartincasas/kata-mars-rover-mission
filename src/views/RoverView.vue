@@ -4,8 +4,12 @@
       <span class="text-white">🛰️</span>
       <span>Welcome to Rover Control System</span>
     </h1>
-    <RoverConsole @submit="handleCommandInput" />
-    <RoverMap :commandInput="commandInput" />
+    <RoverConsole 
+      @submit="handleCommandInput" 
+      :roverStatus="roverStatus"/>
+    <RoverMap 
+      :commandInput="commandInput"
+      @status-change="roverStatus = $event"/>
   </div>
 </template>
   
@@ -16,6 +20,8 @@
   import type { CommandInput } from '@/models/CommandInput';
 
   const commandInput = ref<CommandInput | null>(null)
+
+  const roverStatus = ref<'waiting' | 'executing' | 'success' | 'errorAppearInObstacle' | 'errorObstacle' | 'errorLimits'>('waiting')
 
   function handleCommandInput (data: CommandInput) {
     commandInput.value = data

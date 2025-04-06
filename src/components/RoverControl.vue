@@ -46,7 +46,11 @@
         </p>
       </div>
 
-      <button type="submit" class="p-2 bg-rover-blue-accent text-white rounded hover:bg-rover-blue-active ml-auto">
+      <button 
+        type="submit" 
+        :disabled="props.roverStatus == 'executing'"
+        class="p-2 bg-rover-blue-accent text-white rounded hover:bg-rover-blue-active ml-auto
+        disabled:opacity-50 disabled:hover:bg-rover-blue-accent">
         Send Commands
       </button>
     </div>
@@ -62,6 +66,10 @@
   import { required, numeric, helpers, minValue, maxValue, maxLength } from '@vuelidate/validators'
   import { MIN_MAP_VALUE, MAX_MAP_VALUE, MAX_COMMANDS_LENGTH, VALID_COMMANDS_REGEX} from '@/constants/map'
 
+  const props = defineProps<{
+    roverStatus: string
+  }>()
+  
   const submitted = ref(false)
 
   const roverControlForm = reactive<CommandInput>({
