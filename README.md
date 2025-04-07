@@ -77,3 +77,14 @@ http://localhost:5173
   - Enter an initial position (x, y) and direction (N, E, S, W)
   - Type a command sequence (e.g., FFRFL)
   - Hit Send Commands to see the rover move across the grid
+
+---
+
+## 🧪 Running Tests
+
+To run the unit tests, use:
+
+```bash
+npm run test:unit
+```
+This will launch Vitest and run all available test files. Make sure you've installed dependencies first with npm install.
