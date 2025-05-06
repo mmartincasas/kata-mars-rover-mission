@@ -27,6 +27,14 @@
 
     <HelpModal v-model="showHelp"/>
 
+    <footer class="mt-8 text-xs text-rover-grey text-center opacity-70">
+      Made with 🛰️ by
+      <a href="https://github.com/mmartincasas/kata-mars-rover-mission" target="_blank" class="text-rover-blue-accent hover:underline">
+        mmartincasas
+      </a> — Mars Rover Control {{ currentYear }}
+    </footer>
+
+
   </div>
 </template>
   
@@ -52,6 +60,8 @@ onMounted(() => {
   function handleCommandInput (data: CommandInput) {
     commandInput.value = data
   }
+
+  const currentYear = new Date().getFullYear()
 
   </script>
   
