@@ -1,35 +1,38 @@
 <template>
-<div
-  class="mb-4 px-4 py-2 rounded text-sm font-semibold transition-all duration-300 text-center bg-rover-secondary/50"
-  :class="{
-    'text-rover-grey': roverStatus === 'waiting',
-    'text-rover-execution animate-pulse': roverStatus === 'executing',
-    'text-rover-success': roverStatus === 'success',
-    'text-rover-error animate-shake': isErrorStatus
-  }"
->
-  {{ statusMessage }}
-</div>
-  <div class="flex flex-col">
+  <div
+    class="mb-4 px-4 py-2 rounded text-sm font-semibold transition-all duration-300 text-center bg-rover-secondary/50"
+    :class="{
+      'text-rover-grey': roverStatus === 'waiting',
+      'text-rover-execution animate-pulse': roverStatus === 'executing',
+      'text-rover-success': roverStatus === 'success',
+      'text-rover-error animate-shake': isErrorStatus
+    }"
+  >
+    {{ statusMessage }}
+  </div>
+
+<div class="overflow-auto">
+  <div class="flex flex-col scale-[0.7] sm:scale-100 origin-top mx-auto">
     <div 
-    v-for="(row, rowIndex) in map.grid" 
-    :key="rowIndex" 
-    class="flex"
+      v-for="(row, rowIndex) in map.grid" 
+      :key="rowIndex" 
+      class="flex"
     >
-    <div
+      <div
         v-for="cell in row"
         :key="`${cell.x}-${cell.y}`"
         class="w-[12px] h-[12px] border border-rover-secondary relative">
-          <div v-if="cell.hasRover" 
-            class="w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-b-[10px]"
-            :class="[getRoverColorClass(), getRoverRotationClass()]">
-          </div>
-          <div v-if="cell.isObstacle" 
-            class="absolute inset-0 bg-rover-grey">
-          </div>
+        <div v-if="cell.hasRover" 
+          class="w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-b-[10px]"
+          :class="[getRoverColorClass(), getRoverRotationClass()]">
+        </div>
+        <div v-if="cell.isObstacle" 
+          class="absolute inset-0 bg-rover-grey">
+        </div>
       </div>
     </div>
   </div>
+</div>
 </template>
 
 <script lang="ts" setup>

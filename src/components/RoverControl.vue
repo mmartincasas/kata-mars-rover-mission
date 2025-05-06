@@ -2,35 +2,35 @@
   <form @submit.prevent="onSubmit" 
   class="p-6 bg-rover-secondary text-rover-grey rounded space-y-4 shadow-md">
 
-    <div class="flex space-x-4">
-      <div>
-        <label for="x">X: </label>
-        <input id="x" type="number" v-model.number="roverControlForm.x" class="p-1 border rounded text-rover-secondary" />
-        <p v-if="submitted && v$.x.$error" class="text-rover-error text-sm">
-          {{ v$.x.$errors[0]?.$message || 'X is invalid' }}
-        </p>
-      </div>
+  <div class="flex flex-row flex-wrap gap-4">
+  <div class="flex-1 min-w-[70px]">
+    <label for="x">X: </label>
+    <input id="x" type="number" v-model.number="roverControlForm.x" class="w-full p-1 border rounded text-rover-secondary" />
+    <p v-if="submitted && v$.x.$error" class="text-rover-error text-sm">
+      {{ v$.x.$errors[0]?.$message || 'X is invalid' }}
+    </p>
+  </div>
 
-      <div>
-        <label for="y">Y: </label>
-        <input id="y" type="number" v-model.number="roverControlForm.y" class="p-1 border rounded text-rover-secondary" />
-        <p v-if="submitted && v$.y.$error" class="text-rover-error text-sm">
-          {{ v$.y.$errors[0]?.$message || 'Y is invalid' }}
-        </p>
-      </div>
+  <div class="flex-1 min-w-[70px]">
+    <label for="y">Y: </label>
+    <input id="y" type="number" v-model.number="roverControlForm.y" class="w-full p-1 border rounded text-rover-secondary" />
+    <p v-if="submitted && v$.y.$error" class="text-rover-error text-sm">
+      {{ v$.y.$errors[0]?.$message || 'Y is invalid' }}
+    </p>
+  </div>
 
-      <div>
-        <label for="direction">Direction: </label>
-        <select id="direction" v-model="roverControlForm.direction" class="p-1 border rounded text-rover-secondary">
-          <option value="N">North</option>
-          <option value="E">East</option>
-          <option value="S">South</option>
-          <option value="W">West</option>
-        </select>
-      </div>
-    </div>
+  <div class="flex-1 min-w-[100px]">
+    <label for="direction">Direction: </label>
+    <select id="direction" v-model="roverControlForm.direction" class="w-full p-1 border rounded text-rover-secondary">
+      <option value="N">North</option>
+      <option value="E">East</option>
+      <option value="S">South</option>
+      <option value="W">West</option>
+    </select>
+  </div>
+</div>
 
-    <div class="flex items-center space-x-4">
+    <div class="flex flex-col md:flex-row items-stretch md:items-center space-y-4 md:space-y-0 md:space-x-4">
       <div class="flex-1">
         <label for="commands">Commands: </label>
         <input
@@ -49,8 +49,8 @@
       <button 
         type="submit" 
         :disabled="props.roverStatus == 'executing'"
-        class="p-2 bg-rover-blue-accent text-white rounded hover:bg-rover-blue-active ml-auto
-        disabled:opacity-50 disabled:hover:bg-rover-blue-accent">
+        class="p-2 bg-rover-blue-accent text-white rounded hover:bg-rover-blue-active
+        disabled:opacity-50 disabled:hover:bg-rover-blue-accent w-full md:w-auto">
         Send Commands
       </button>
     </div>

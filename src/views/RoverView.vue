@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen flex flex-col items-center space-y-4 p-6">
-    <h1 class="p-4 text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-rover-turquoise to-rover-blue-accent flex items-center gap-2">
+    <h1 class="p-4 text-2xl sm:text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-rover-turquoise to-rover-blue-accent flex items-center gap-2">
       <span class="text-white">🛰️</span>
       <span>Welcome to Rover Control System</span>
     </h1>
